@@ -9,24 +9,23 @@ struct Estudiante {
     float promedio;
 };
 
+//Funciones para trabajar arreglos
+void leerArreglo(int arr[], int n);
 void mostrarArreglo(int arr[], int n);
 
 void cambio(int &a, int &b);
 
+//Algoritmos de ordenamiento
 void burbuja(int arr[], int n);
-
 void seleccion(int arr[], int n);
-
 void insertionSort (int arr[], int tam);
-
 int particion(int arr[], int inicio, int fin);
 void quickSort(int arr[], int inicio, int fin);
-
 void merge(int arr[], int inicio, int medio, int fin);
 void mergeSort(int arr[], int inicio, int fin);
 
+//Algoritmos de búsqueda
 int secuencial(int arr[], int tam, int valor, int index);
-
 int binaria(int arr[], int inicio, int fin, int valor);
 
 int promedioGeneral ();
@@ -38,6 +37,13 @@ int main() {
     
 
     return 0;
+}
+
+void leerArreglo(int arr[], int n){
+    for (int i=0; i<n; i++){
+        cout << i+1 << ".- ";
+        cin >> arr[i];
+    }
 }
 
 void mostrarArreglo(int arr[], int n){
