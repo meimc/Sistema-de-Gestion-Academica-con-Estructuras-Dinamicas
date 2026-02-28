@@ -1,0 +1,46 @@
+# Build artifacts
+/build/
+/bin/
+/out/
+/cmake-build-debug/
+*.o
+*.obj
+*.so
+*.a
+*.lib
+*.exe
+*.dll
+*.out
+*.app
+*.pch
+*.gch
+
+# IDE & tooling
+.vscode/
+.idea/
+*.vcxproj*
+*.user
+*.userosscache
+*.suo
+*.tmp
+*.log
+*.cache
+*.swp
+*~
+.DS_Store
+
+# CMake / build system metadata
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+install_manifest.txt
+
+# GitHub Codespaces / Dev Containers
+.devcontainer/
+
+# Miscellaneous
+/.sisyphus/
+../.sisyphus/
+*.dSYM/
+*.pdb
