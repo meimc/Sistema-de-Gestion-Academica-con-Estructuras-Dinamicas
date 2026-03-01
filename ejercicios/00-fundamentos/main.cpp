@@ -67,8 +67,7 @@ float leerPromedio(float min = 0.0f, float max = 20.0f) {
       limpiarEntrada();
       continue;
     }
-    continue;
-    if (promedio < 0 || promedio > max) {
+    if (promedio < min || promedio > max) {
       cout << "Fuera de rango.\n";
       continue;
     }
@@ -98,11 +97,10 @@ int leerOpcion(int min = 1, int max = 5) {
   while (true) {
     cout << "Elige una opcion: ";
     if (cin >> opcion && opcion >= min && opcion <= max) {
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      limpiarEntrada();
       return opcion;
     }
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    limpiarEntrada();
   }
 }
 
