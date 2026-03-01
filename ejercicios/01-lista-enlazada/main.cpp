@@ -55,6 +55,7 @@ int leerCodigo() {
 string leerNombre() {
   string nombre;
   while (true) {
+    cout << "Ingrese nombre: \n";
     getline(cin, nombre);
     if (!esNombreValido(nombre)) {
       cout << "Ingrese un nombre valido! No vacio.\n";
@@ -67,6 +68,7 @@ string leerNombre() {
 float leerPromedio(float min = 0.0f, float max = 20.0f) {
   float promedio;
   while (true) {
+    cout << "Ingrese promedio: \n";
     if (!(cin >> promedio)) {
       cout << "Entrada invalida debe ser un numero!\n";
       limpiarEntrada();
@@ -140,9 +142,9 @@ bool modificarPorCodigo(Nodo *head, int codigo) {
   Nodo *curr = head;
   while (curr != nullptr) {
     if (curr->data.codigo == codigo) {
-      cout << "Nuevo nombre: \n";
+      cout << "Nuevo nombre \n";
       curr->data.nombre = leerNombre();
-      cout << "Nuevo promedio: \n";
+      cout << "Nuevo promedio \n";
       curr->data.promedio = leerPromedio();
       return true;
     }
@@ -189,11 +191,13 @@ void mostrarMenu() {
   cout << "3. Modificar\n";
   cout << "4. Mostrar\n";
   cout << "5. Salir\n";
+  cout << "========================\n";
 }
 
 int leerOpcion(int min = 1, int max = 5) {
   int opcion;
   while (true) {
+    cout << "Ingrese opcion: \n";
     if (cin >> opcion && opcion >= min && opcion <= max) {
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
       return opcion;
