@@ -7,9 +7,27 @@ struct Estudiante {
     int codigo;
     string nombre;
     float promedio;
+    Estudiante *siguiente;
 };
 
-//Funciones para trabajar arreglos
+enum Menu{
+    REGISTRO=1,
+    ELIMINACION,
+    MODIFICACION,
+    SALIR
+};
+
+//Validaciones
+void validacionMenu(int &opc);
+void validacionDosOpciones(int &opc);
+void validacionRegistro(int &cantidad);
+void titulo();
+void final();
+
+//Funciones para trabajar estructuras de datos
+void insertarFinal(Estudiante *&cabeza, int codigo, string nombre, float promedio);
+void imprimirLista(Estudiante *cabeza);
+void eliminarEspecifico(Estudiante *&cabeza, int posicion);
 void leerArreglo(int arr[], int n);
 void mostrarArreglo(int arr[], int n);
 
@@ -34,9 +52,153 @@ int main() {
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
 
-    
+    Estudiante *cabeza = NULL;
 
+    int opc;
+    do{
+        titulo();
+        cout << "--------------- MENU ---------------"<<endl;
+        cout << "1. Registrar nuevo alumno"<<endl;
+        cout << "2. Eliminar alumno existente"<<endl;
+        cout << "3. Modificar datos de alumno"<<endl;
+        cout << "4. Salir"<<endl;
+        cout << "Seleccione una opcion: ";
+        cin >> opc;
+        validacionMenu(opc);
+        switch (opc){
+            case REGISTRO:{
+            int cantidad;
+
+            int codigo;
+            string nombre;
+            float promedio;
+
+            cout << "\nCantidad de registros: ";
+            cin >> cantidad;
+            validacionRegistro(cantidad);
+
+            for (int i=0; i<cantidad; i++){
+                cout << "\nEstudiante " << i+1 << ": " << endl;
+                cout << "Código: ";
+                cin >> codigo;
+                cin.ignore(1000, '\n');
+                cout << "Nombre: ";
+                getline(cin, nombre);
+                cout << "Promedio: ";
+                cin >> promedio;
+                cout << endl;
+                insertarFinal(cabeza, codigo, nombre, promedio);
+            }
+
+            imprimirLista(cabeza);
+
+            
+                break;
+            }
+            case ELIMINACION:{
+                int cantidad, posicion;
+                cout << "\nCantidad de alumnos a eliminar: ";
+                cin >> cantidad;
+                validacionRegistro(cantidad);
+
+                imprimirLista(cabeza);
+
+                for (int i=0; i<cantidad; i++){
+                    cout << "\nNúmero de estudiante a eliminar: ";
+                    cin >> posicion;
+                    cout << endl;
+                    eliminarEspecifico(cabeza, posicion);
+                }
+
+                imprimirLista(cabeza);
+                
+                break;
+            }
+            case MODIFICACION:{
+                break;
+            }
+        }
+    }while(opc!=SALIR);
+    
+    final();
     return 0;
+}
+
+void titulo()
+{
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+
+    cout << "\n";
+    cout << "╔════════════════════════════════════════════════════╗\n";
+    cout << "║            SISTEMA DE GESTIÓN ACADÉMICA            ║\n";
+    cout << "╚════════════════════════════════════════════════════╝\n";
+    cout << "\n";
+}
+
+void insertarFinal(Estudiante *&cabeza, int codigo, string nombre, float promedio){
+    Estudiante *nuevo = new Estudiante();
+    nuevo->codigo = codigo;
+    nuevo->nombre = nombre;
+    nuevo->promedio = promedio;
+    nuevo->siguiente = NULL;
+
+    if(cabeza == NULL)
+        cabeza = nuevo;
+    else{
+        Estudiante *actual = cabeza;
+        while (actual->siguiente != NULL)
+            actual = actual->siguiente;
+
+        actual->siguiente = nuevo;
+    }
+        
+}
+
+void imprimirLista(Estudiante *cabeza){
+    Estudiante *actual = cabeza;
+    int lista = 1;
+
+    while (actual != NULL){
+        cout << lista << ".- "<< actual->codigo <<" "<< actual->nombre <<" Promedio: "<< actual->promedio << endl;
+        actual = actual->siguiente;
+        lista++;
+    }
+}
+
+void eliminarEspecifico(Estudiante *&cabeza, int posicion){
+
+    if(posicion <= 0){
+        cout << "Posición inválida"<<endl;
+        return;
+    }
+
+    if(posicion == 0){
+        Estudiante *temp = cabeza;
+        cabeza = cabeza->siguiente;
+        delete temp;
+        return;
+    }
+
+    Estudiante *actual = cabeza;
+    int contador = 1;
+
+    while(actual != NULL && contador < posicion - 1){
+        actual = actual->siguiente;
+        contador++;
+    }
+
+    if(actual == NULL){
+        cout << "Posición fuera de rango\n";
+        return;
+    }
+
+    Estudiante *temp = actual->siguiente;          
+    actual->siguiente = temp->siguiente;     
+    delete temp;  
 }
 
 void leerArreglo(int arr[], int n){
@@ -196,4 +358,50 @@ int binaria(int arr[], int inicio, int fin, int valor){
     }else{
         return binaria(arr, medio+1, fin, valor);
     }
+}
+
+void validacionMenu(int &opc) {
+    while (opc < 1 || opc > 4 || cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Error. Ingresa una opción válida del menú." << endl;
+        cin >> opc;
+    }
+}
+
+void validacionDosOpciones(int &opc) {
+    while (opc != 1 || opc != 2 || cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "Error. Ingresa una opción válida." << endl;
+        cin >> opc;
+    }
+}
+
+void validacionRegistro(int &cantidad) {
+    int opc=2;
+    while ((cantidad < 1 && opc == 2) || cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+
+        cout << "Error. ¿Desea volver al menú principal?\n1. SI // 2. NO"<<endl;
+        cout << "Seleccione una opcion: ";
+        cin >> opc;
+        validacionDosOpciones(opc);
+        if (opc == 2){
+            cout << "\nDebe hacer el registro de al menos 1 alumno" << endl;
+            cout << "Ingrese la cantidad de registros: ";
+            cin >> cantidad;
+        }
+        
+    }
+}
+
+
+
+void final() {
+    cout << endl
+         << endl
+         << "--------------------- Gracias ------------------------" << endl
+         << endl;
 }
