@@ -1,8 +1,9 @@
 #include <iostream>
 #include <windows.h>
 #include <string>
-using namespace std;
+#include <iomanip>
 
+using namespace std;
 struct Estudiante {
     int codigo;
     string nombre;
@@ -14,20 +15,32 @@ enum Menu{
     REGISTRO=1,
     ELIMINACION,
     MODIFICACION,
+    ORDENAR,
+    BUSCAR,
+    PROMEDIO_GENERAL,
+    VER_LISTA,
     SALIR
 };
 
+enum Edit{
+    CODIGO=1,
+    NOMBRE,
+    PROMEDIO,
+    SALIR2
+};
+
 //Validaciones
-void validacionMenu(int &opc);
+void validacionMenu(int opc);
 void validacionDosOpciones(int &opc);
 void validacionRegistro(int &cantidad);
 void titulo();
 void final();
 
 //Funciones para trabajar estructuras de datos
-void insertarFinal(Estudiante *&cabeza, int codigo, string nombre, float promedio);
+void registroEstudiante(Estudiante *&cabeza, int codigo, string nombre, float promedio);
 void imprimirLista(Estudiante *cabeza);
-void eliminarEspecifico(Estudiante *&cabeza, int posicion);
+void eliminarEstudiante(Estudiante *&cabeza, int codigo);
+void modificarEstudiante(Estudiante *&cabeza, int codigo);
 void leerArreglo(int arr[], int n);
 void mostrarArreglo(int arr[], int n);
 
@@ -57,19 +70,23 @@ int main() {
     int opc;
     do{
         titulo();
-        cout << "--------------- MENU ---------------"<<endl;
-        cout << "1. Registrar nuevo alumno"<<endl;
-        cout << "2. Eliminar alumno existente"<<endl;
-        cout << "3. Modificar datos de alumno"<<endl;
-        cout << "4. Salir"<<endl;
+
+        cout << "--------------- MENU ---------------"
+             << "\n1. Registrar nuevo alumno"
+             << "\n2. Eliminar alumno existente"
+             << "\n3. Modificar datos de alumno"
+             << "\n4. Ordenar lista"
+             << "\n5. Buscar alumno"
+             << "\n6. Promedio general del grupo"
+             << "\n7. Ver lista"
+             << "\n8. Salir"<<endl;
         cout << "Seleccione una opcion: ";
         cin >> opc;
         validacionMenu(opc);
+
         switch (opc){
             case REGISTRO:{
-            int cantidad;
-
-            int codigo;
+            int codigo, cantidad;
             string nombre;
             float promedio;
 
@@ -81,22 +98,17 @@ int main() {
                 cout << "\nEstudiante " << i+1 << ": " << endl;
                 cout << "Código: ";
                 cin >> codigo;
-                cin.ignore(1000, '\n');
+                cin.ignore();
                 cout << "Nombre: ";
                 getline(cin, nombre);
                 cout << "Promedio: ";
                 cin >> promedio;
-                cout << endl;
-                insertarFinal(cabeza, codigo, nombre, promedio);
+                registroEstudiante(cabeza, codigo, nombre, promedio);
             }
-
-            imprimirLista(cabeza);
-
-            
-                break;
+            break;
             }
             case ELIMINACION:{
-                int cantidad, posicion;
+                int cantidad, codigo;
                 cout << "\nCantidad de alumnos a eliminar: ";
                 cin >> cantidad;
                 validacionRegistro(cantidad);
@@ -104,19 +116,45 @@ int main() {
                 imprimirLista(cabeza);
 
                 for (int i=0; i<cantidad; i++){
-                    cout << "\nNúmero de estudiante a eliminar: ";
-                    cin >> posicion;
+                    cout << "\nCódigo de estudiante a eliminar: ";
+                    cin >> codigo;
                     cout << endl;
-                    eliminarEspecifico(cabeza, posicion);
+                    eliminarEstudiante(cabeza, codigo);
                 }
-
-                imprimirLista(cabeza);
                 
                 break;
             }
             case MODIFICACION:{
+                int codigo;
+                cout << "\nCódigo de estudiante a modificar: ";
+                cin >> codigo;
+                cout << endl;
+                modificarEstudiante(cabeza, codigo);
                 break;
             }
+            case ORDENAR:{
+                break;
+            }
+            case BUSCAR:{
+                break;
+            }
+            case PROMEDIO_GENERAL:{
+                break;
+            }
+            case VER_LISTA:{
+                imprimirLista(cabeza);
+                break;
+            }
+            default:{
+                if(opc!=8){
+                    cout<<"\nError. Ingresa una opción válida del menú."<<endl;
+                
+                    cout << "\nPresiona [Enter] para volver al menú...";
+                    cin.ignore();
+                    cin.get();
+                }
+                break;
+            } 
         }
     }while(opc!=SALIR);
     
@@ -139,7 +177,7 @@ void titulo()
     cout << "\n";
 }
 
-void insertarFinal(Estudiante *&cabeza, int codigo, string nombre, float promedio){
+void registroEstudiante(Estudiante *&cabeza, int codigo, string nombre, float promedio){
     Estudiante *nuevo = new Estudiante();
     nuevo->codigo = codigo;
     nuevo->nombre = nombre;
@@ -150,55 +188,117 @@ void insertarFinal(Estudiante *&cabeza, int codigo, string nombre, float promedi
         cabeza = nuevo;
     else{
         Estudiante *actual = cabeza;
-        while (actual->siguiente != NULL)
+        while(actual->siguiente!=NULL){
+            if(actual->codigo == codigo){
+                cout << "\nError: Código en uso, ingrese un código válido."<<endl;
+                cout << "\nPresiona [Enter] para volver al menú...";
+                cin.ignore();
+                cin.get();
+                return;
+            }
             actual = actual->siguiente;
-
+        }
+            
         actual->siguiente = nuevo;
     }
-        
 }
 
 void imprimirLista(Estudiante *cabeza){
-    Estudiante *actual = cabeza;
-    int lista = 1;
 
-    while (actual != NULL){
-        cout << lista << ".- "<< actual->codigo <<" "<< actual->nombre <<" Promedio: "<< actual->promedio << endl;
-        actual = actual->siguiente;
-        lista++;
+    cout << endl;
+    cout << left << setw(10) << "Codigo"
+         << setw(25) << "Nombre"
+         << setw(10) << "Promedio" << endl;
+
+    cout << "---------------------------------------------" << endl;
+
+    if (cabeza==NULL)
+        cout << "\nError: No hay datos en la lista."<<endl;
+        
+    while (cabeza != NULL){
+        cout << left << setw(10) << cabeza->codigo 
+             << setw(25) << cabeza->nombre 
+             << setw(10) << cabeza->promedio << endl;
+        cabeza = cabeza->siguiente;
     }
+
+    cout << "\nPresiona [Enter] para salir de la lista";
+    cin.ignore();
+    cin.get();
 }
 
-void eliminarEspecifico(Estudiante *&cabeza, int posicion){
+void eliminarEstudiante(Estudiante *&cabeza, int codigo){
+    Estudiante *eliminado = cabeza;
+    Estudiante *aux = NULL;
 
-    if(posicion <= 0){
-        cout << "Posición inválida"<<endl;
+    while(eliminado != NULL && eliminado->codigo != codigo){
+            aux = eliminado;
+            eliminado = eliminado->siguiente;
+        }
+
+    if(eliminado == NULL){
+        cout << "Error: No existe el código."<<endl;
         return;
     }
 
-    if(posicion == 0){
-        Estudiante *temp = cabeza;
-        cabeza = cabeza->siguiente;
-        delete temp;
-        return;
-    }
+    if(aux == NULL)
+        cabeza = eliminado->siguiente;
+    else
+        aux->siguiente = eliminado->siguiente;
+    
+    delete eliminado;
+}
 
+void modificarEstudiante(Estudiante *&cabeza, int codigo){
     Estudiante *actual = cabeza;
-    int contador = 1;
 
-    while(actual != NULL && contador < posicion - 1){
-        actual = actual->siguiente;
-        contador++;
-    }
+    while(actual != NULL && actual->codigo != codigo){
+            actual = actual->siguiente;
+        }
 
     if(actual == NULL){
-        cout << "Posición fuera de rango\n";
+        cout << "Error: No existe el código."<<endl;
         return;
     }
+    int opc;
+    do{
+        cout << "--------------- MENU ---------------"
+             << "\n1. Cambiar código"
+             << "\n2. Cambiar nombre"
+             << "\n3. Cambiar promedio"
+             << "\n4. Salir"<<endl;
+        cout << "Seleccione una opcion: ";
+        cin >> opc;
+        validacionMenu(opc);
 
-    Estudiante *temp = actual->siguiente;          
-    actual->siguiente = temp->siguiente;     
-    delete temp;  
+        switch (opc){
+            case CODIGO:{
+                cout << "Ingresa el nuevo código: ";
+                cin >> actual->codigo;
+                break;
+            }
+            case NOMBRE:{
+                cout << "Ingresa el nuevo nombre: ";
+                cin.ignore();
+                getline(cin, actual->nombre);
+                break;
+            }
+            case PROMEDIO:{
+                cout << "Ingresa el nuevo promedio: ";
+                cin >> actual->promedio;
+                break;
+            }
+            default:
+            if(opc!=4){
+                    cout<<"\nError. Ingresa una opción válida del menú."<<endl;
+                
+                    cout << "\nPresiona [Enter] para volver al menú...";
+                    cin.ignore();
+                    cin.get();
+                }
+                break;
+        }
+    }while(opc!=SALIR2);
 }
 
 void leerArreglo(int arr[], int n){
@@ -360,12 +460,10 @@ int binaria(int arr[], int inicio, int fin, int valor){
     }
 }
 
-void validacionMenu(int &opc) {
-    while (opc < 1 || opc > 4 || cin.fail()) {
+void validacionMenu(int opc) {
+    if (cin.fail()) {
         cin.clear();
-        cin.ignore(1000, '\n');
-        cout << "Error. Ingresa una opción válida del menú." << endl;
-        cin >> opc;
+        cin.ignore();
     }
 }
 
@@ -396,8 +494,6 @@ void validacionRegistro(int &cantidad) {
         
     }
 }
-
-
 
 void final() {
     cout << endl
