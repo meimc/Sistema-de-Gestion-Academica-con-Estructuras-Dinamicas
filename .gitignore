@@ -28,6 +28,7 @@
 *.swp
 *~
 .DS_Store
+.clang-format
 
 # CMake / build system metadata
 CMakeFiles/
